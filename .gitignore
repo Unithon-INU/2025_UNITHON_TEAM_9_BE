@@ -1,0 +1,59 @@
+# Python
+__pycache__
+model/__pycache__
+model/DensePose/__pycache__
+model/SCHP/__pycache__
+model/SCHP/*/__pycache__
+resource/demo/output
+resource/demo/example/.DS_Store
+Models
+Datasets
+densepose_
+.vscode
+playground.py
+output
+model/cloth_masker_segformer.py
+my_test
+
+# Kotlin Spring
+
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Kotlin ###
+.kotlin
