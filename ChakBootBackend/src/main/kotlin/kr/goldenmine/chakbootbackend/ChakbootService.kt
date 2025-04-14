@@ -64,9 +64,8 @@ class ChakbootService(
     }
 
     fun generateUrl(bufferedImage: BufferedImage): String {
+        // 동기화된 파일 만들기
         var file: File
-
-        // 새로운 생성
         synchronized(this) {
             do {
                 file = File("$imagePath/${UUID.randomUUID()}")
@@ -93,8 +92,3 @@ class ChakbootService(
 //        bytes             // file content
 //    )
 //}
-
-fun byteArrayToBufferedImage(bytes: ByteArray): BufferedImage {
-    val inputStream = ByteArrayInputStream(bytes)
-    return ImageIO.read(inputStream) ?: throw IllegalArgumentException("Invalid image byte array")
-}

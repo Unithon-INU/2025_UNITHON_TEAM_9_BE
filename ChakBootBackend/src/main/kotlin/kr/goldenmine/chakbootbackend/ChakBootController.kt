@@ -1,6 +1,7 @@
 package kr.goldenmine.chakbootbackend
 
 import kr.goldenmine.chakbootbackend.dto.ResponsePrediction
+import kr.goldenmine.chakbootbackend.util.byteArrayToBufferedImage
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
