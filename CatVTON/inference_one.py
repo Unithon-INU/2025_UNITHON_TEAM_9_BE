@@ -14,6 +14,9 @@ from model.pipeline import CatVTONPipeline
 from utils import init_weight_dtype, resize_and_crop, resize_and_padding
 
 
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+
 def image_grid(imgs, rows, cols):
     assert len(imgs) == rows * cols
 
@@ -26,6 +29,8 @@ def image_grid(imgs, rows, cols):
 
 
 repo_path = snapshot_download(repo_id="zhengchong/CatVTON")
+print('repo path:', repo_path)
+
 # Pipeline
 pipeline = CatVTONPipeline(
     base_ckpt="booksforcharlie/stable-diffusion-inpainting",
@@ -33,7 +38,7 @@ pipeline = CatVTONPipeline(
     attn_ckpt_version="mix",
     weight_dtype=init_weight_dtype("bf16"),
     use_tf32=True,
-    device='cuda',
+    device=DEVICE,
     skip_safety_check=True
 )
 # AutoMasker
@@ -41,12 +46,13 @@ mask_processor = VaeImageProcessor(vae_scale_factor=8, do_normalize=False, do_bi
 automasker = AutoMasker(
     densepose_ckpt=os.path.join(repo_path, "DensePose"),
     schp_ckpt=os.path.join(repo_path, "SCHP"),
-    device='cuda', 
+    device=DEVICE,
 )
 
 
 WIDTH = 768
 HEIGHT = 1024
+
 
 def inference_model(
     person_image,  # numpy image
@@ -55,11 +61,11 @@ def inference_model(
     num_inference_steps=25,
     guidance_scale=3,
     seed=42,
-    show_type="result_only",
+    show_type="result only",
 ):
     generator = None
     if seed != -1:
-        generator = torch.Generator(device='cuda').manual_seed(seed)
+        generator = torch.Generator(device=DEVICE).manual_seed(seed)
 
     # person_image = Image.open(person_image).convert("RGB")
     # cloth_image = Image.open(cloth_image).convert("RGB")
