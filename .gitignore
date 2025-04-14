@@ -17,6 +17,7 @@ my_test
 .env
 venv
 .venv
+db.sqlite3
 
 # Kotlin Spring
 

@@ -1,3 +1,4 @@
+# for catvton model
 torch
 torchvision
 accelerate
@@ -19,4 +20,7 @@ av
 gradio
 peft
 huggingface_hub
+
+# for inference server
 django
+python-dotenv

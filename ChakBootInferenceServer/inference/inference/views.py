@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from PIL import Image
 
-from CatVTON.inference_one import inference_model
+from inference_one import inference_model
 
 
 @csrf_exempt

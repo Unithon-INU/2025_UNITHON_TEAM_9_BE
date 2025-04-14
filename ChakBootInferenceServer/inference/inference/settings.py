@@ -12,22 +12,28 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import sys
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 DOTENV_PATH = os.path.join(BASE_DIR, ".env")
 print('dotenv path:', DOTENV_PATH)
 load_dotenv(dotenv_path=DOTENV_PATH)  # .env 로드
 
+# 외부 폴더 쓰고 싶으니까 경로 강제 추가
+sys.path.append(os.path.abspath(os.path.join(BASE_DIR.parent, 'CatVTON')))
+# sys.path.append(os.path.abspath(BASE_DIR.parent))
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY WARNING: keep the secret key used in production secret
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# print(os.getenv('DEBUG'))
 DEBUG = bool(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = []
@@ -110,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ko-KR'
 
-TIME_ZONE = 'UTC-9'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
