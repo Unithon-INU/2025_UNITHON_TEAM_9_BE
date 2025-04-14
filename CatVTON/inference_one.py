@@ -121,47 +121,38 @@ automasker = AutoMasker(
     device='cuda', 
 )
 
-def submit_function(
-    person_image,
-    cloth_image,
-    cloth_type,
-    num_inference_steps,
-    guidance_scale,
-    seed,
-    show_type
-):
-    person_image, mask = person_image["background"], person_image["layers"][0]
-    mask = Image.open(mask).convert("L")
-    if len(np.unique(np.array(mask))) == 1:
-        mask = None
-    else:
-        mask = np.array(mask)
-        mask[mask > 0] = 255
-        mask = Image.fromarray(mask)
 
-    tmp_folder = args.output_dir
-    date_str = datetime.now().strftime("%Y%m%d%H%M%S")
-    result_save_path = os.path.join(tmp_folder, date_str[:8], date_str[8:] + ".png")
-    if not os.path.exists(os.path.join(tmp_folder, date_str[:8])):
-        os.makedirs(os.path.join(tmp_folder, date_str[:8]))
+def inference_model(
+    person_image,  # numpy image
+    cloth_image,  # numpy image
+    cloth_type='overall',
+    num_inference_steps=25,
+    guidance_scale=3,
+    seed=-1,
+    show_type="result_only",
+):
+    # person_image, mask = person_image["background"], person_image["layers"][0]
+
+    # tmp_folder = args.output_dir
+    # date_str = datetime.now().strftime("%Y%m%d%H%M%S")
+    # result_save_path = os.path.join(tmp_folder, date_str[:8], date_str[8:] + ".png")
+    # if not os.path.exists(os.path.join(tmp_folder, date_str[:8])):
+    #     os.makedirs(os.path.join(tmp_folder, date_str[:8]))
 
     generator = None
     if seed != -1:
         generator = torch.Generator(device='cuda').manual_seed(seed)
 
-    person_image = Image.open(person_image).convert("RGB")
-    cloth_image = Image.open(cloth_image).convert("RGB")
+    # person_image = Image.open(person_image).convert("RGB")
+    # cloth_image = Image.open(cloth_image).convert("RGB")
     person_image = resize_and_crop(person_image, (args.width, args.height))
     cloth_image = resize_and_padding(cloth_image, (args.width, args.height))
     
     # Process mask
-    if mask is not None:
-        mask = resize_and_crop(mask, (args.width, args.height))
-    else:
-        mask = automasker(
-            person_image,
-            cloth_type
-        )['mask']
+    mask = automasker(
+        person_image,
+        cloth_type
+    )['mask']
     mask = mask_processor.blur(mask, blur_factor=9)
 
     # Inference
@@ -181,8 +172,8 @@ def submit_function(
     
     # Post-process
     masked_person = vis_mask(person_image, mask)
-    save_result_image = image_grid([person_image, masked_person, cloth_image, result_image], 1, 4)
-    save_result_image.save(result_save_path)
+    # save_result_image = image_grid([person_image, masked_person, cloth_image, result_image], 1, 4)
+    # save_result_image.save(result_save_path)
     if show_type == "result only":
         return result_image
     else:
@@ -216,12 +207,9 @@ def main():
     blank_mask = Image.fromarray(np.zeros((1, 1), dtype=np.uint8))  # 완전 검정
     blank_mask.save(blank_mask_path)
 
-    result_image = submit_function(
-        {
-            'background': person_image_path,
-            'layers': [blank_mask_path],
-        },
-        cloth_image_path,
+    result_image = inference_model(
+        Image.open(person_image_path).convert('RGB'),
+        Image.open(cloth_image_path).convert('RGB'),
         cloth_type,
         num_inference_steps,
         guidance_scale,
