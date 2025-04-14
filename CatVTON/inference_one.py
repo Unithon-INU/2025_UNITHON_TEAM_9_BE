@@ -1,20 +1,17 @@
-import argparse
 import os
-from datetime import datetime
 
-import gradio as gr
 import numpy as np
 import torch
+from PIL import Image
 from diffusers.image_processor import VaeImageProcessor
 from huggingface_hub import snapshot_download
-from PIL import Image
 
 from model.cloth_masker import AutoMasker, vis_mask
 from model.pipeline import CatVTONPipeline
 from utils import init_weight_dtype, resize_and_crop, resize_and_padding
 
-
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+# DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() and torch.backends.mps.is_built() else 'cpu')
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def image_grid(imgs, rows, cols):
@@ -29,7 +26,7 @@ def image_grid(imgs, rows, cols):
 
 
 repo_path = snapshot_download(repo_id="zhengchong/CatVTON")
-print('repo path:', repo_path)
+# print('repo path:', repo_path)
 
 # Pipeline
 pipeline = CatVTONPipeline(
@@ -78,6 +75,7 @@ def inference_model(
         cloth_type
     )['mask']
     mask = mask_processor.blur(mask, blur_factor=9)
+    # print('mask inference')
 
     # Inference
     # try:
@@ -89,18 +87,19 @@ def inference_model(
         guidance_scale=guidance_scale,
         generator=generator,
     )[0]
+    # print('inference')
     # except Exception as e:
     #     raise gr.Error(
     #         "An error occurred. Please try again later: {}".format(e)
     #     )
-    
-    # Post-process
-    masked_person = vis_mask(person_image, mask)
+
     # save_result_image = image_grid([person_image, masked_person, cloth_image, result_image], 1, 4)
     # save_result_image.save(result_save_path)
     if show_type == "result only":
         return result_image
     else:
+        # Post-process
+        masked_person = vis_mask(person_image, mask)
         width, height = person_image.size
         if show_type == "input & result":
             condition_width = width // 2

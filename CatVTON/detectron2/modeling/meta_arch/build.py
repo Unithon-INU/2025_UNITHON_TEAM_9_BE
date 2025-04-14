@@ -12,6 +12,9 @@ The registered object will be called with `obj(cfg)`
 and expected to return a `nn.Module` object.
 """
 
+# DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() and torch.backends.mps.is_built() else 'cpu')
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
 def build_model(cfg):
     """
@@ -22,7 +25,6 @@ def build_model(cfg):
     model = META_ARCH_REGISTRY.get(meta_arch)(cfg)
 
     # override device
-    DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
     model.to(torch.device(DEVICE))
 
     # model.to(torch.device(cfg.MODEL.DEVICE))

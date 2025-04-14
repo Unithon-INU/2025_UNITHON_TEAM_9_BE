@@ -249,6 +249,9 @@ def default_writers(output_dir: str, max_iter: Optional[int] = None):
     ]
 
 
+# DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() and torch.backends.mps.is_built() else 'cpu')
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 class DefaultPredictor:
     """
     Create a simple end-to-end predictor with the given config that runs on
@@ -312,7 +315,8 @@ class DefaultPredictor:
             height, width = original_image.shape[:2]
             image = self.aug.get_transform(original_image).apply_image(original_image)
             image = torch.as_tensor(image.astype("float32").transpose(2, 0, 1))
-            image.to(self.cfg.MODEL.DEVICE)
+            # image.to(self.cfg.MODEL.DEVICE)
+            image.to(DEVICE)
 
             inputs = {"image": image, "height": height, "width": width}
 
