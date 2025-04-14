@@ -4,10 +4,7 @@ import kr.goldenmine.chakbootbackend.dto.ResponsePrediction
 import kr.goldenmine.chakbootbackend.util.byteArrayToBufferedImage
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestPart
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
@@ -24,7 +21,7 @@ class ChakBootController(
         val result = chakbootService.inferenceImage(img1, img2)
 //        val base64Image = Base64Utils.encodeToString(result)
         val base64Image = Base64.getEncoder().encodeToString(result)
-        val url = chakbootService.generateUrl(byteArrayToBufferedImage(result))
+        val url = chakbootService.generateFile(byteArrayToBufferedImage(result))
 
         return ResponseEntity
             .ok()
@@ -33,5 +30,16 @@ class ChakBootController(
                 imageBase64 = base64Image,
                 url = url,
             ))
+    }
+
+    @PostMapping("/url/{name}")
+    fun getFile(
+        @PathVariable("name") name: String
+    ): ResponseEntity<ByteArray> {
+        val array = chakbootService.getImageFromFile(name)
+        return ResponseEntity
+            .ok()
+            .contentType(MediaType.IMAGE_PNG)
+            .body(array)
     }
 }

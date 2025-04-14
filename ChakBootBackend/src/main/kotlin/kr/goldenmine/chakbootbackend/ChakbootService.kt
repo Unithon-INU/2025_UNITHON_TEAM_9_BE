@@ -9,6 +9,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.runBlocking
+import kr.goldenmine.chakbootbackend.util.isValidUUID
 import org.apache.coyote.BadRequestException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.awt.image.BufferedImage
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.util.*
 import javax.imageio.ImageIO
@@ -69,7 +69,7 @@ class ChakbootService(
         File(imagePath).mkdirs()
     }
 
-    fun generateUrl(bufferedImage: BufferedImage): String {
+    fun generateFile(bufferedImage: BufferedImage): String {
         // 동기화된 파일 만들기
         var file: File
         synchronized(this) {
@@ -83,6 +83,14 @@ class ChakbootService(
         logger.info("Generated url: ${file.path} $res ${bufferedImage.width} ${bufferedImage.height}")
 
         return file.name
+    }
+
+    fun getImageFromFile(fileName: String): ByteArray {
+        if(!isValidUUID(fileName)) throw BadRequestException("url is not valid")
+        val file = File("$imagePath/$fileName")
+        if(!file.exists()) throw BadRequestException("file does not exist")
+
+        return file.readBytes()
     }
 }
 
