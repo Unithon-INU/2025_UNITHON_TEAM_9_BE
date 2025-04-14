@@ -28,7 +28,7 @@ class ChakBootController(
 
         return ResponseEntity
             .ok()
-            .contentType(MediaType.APPLICATION_JSON)
+//            .contentType(MediaType.APPLICATION_JSON)
             .body(ResponsePrediction(
                 imageBase64 = base64Image,
                 url = url,

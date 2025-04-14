@@ -7,6 +7,7 @@ import io.ktor.client.plugins.compression.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.runBlocking
 import org.apache.coyote.BadRequestException
 import org.slf4j.Logger
@@ -35,6 +36,7 @@ class ChakbootService(
         val img1Bytes = img1.bytes
         val img2Bytes = img2.bytes
 
+//        return img1Bytes
         val result: ByteArray?
         runBlocking {
             val response = ktorClient.submitFormWithBinaryData(
@@ -60,7 +62,11 @@ class ChakbootService(
         }
 
         return result ?: throw BadRequestException("에러 발생")
-//        return byteArrayToMultipartFile(result ?: throw BadRequestException("에러 발생"))
+    }
+
+    @PostConstruct
+    fun createFolder() {
+        File(imagePath).mkdirs()
     }
 
     fun generateUrl(bufferedImage: BufferedImage): String {
@@ -73,7 +79,8 @@ class ChakbootService(
             file.createNewFile()
         }
 
-        ImageIO.write(bufferedImage, "jpg", file)
+        val res = ImageIO.write(bufferedImage, "png", file)
+        logger.info("Generated url: ${file.path} $res ${bufferedImage.width} ${bufferedImage.height}")
 
         return file.name
     }

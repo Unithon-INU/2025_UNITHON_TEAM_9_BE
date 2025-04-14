@@ -20,7 +20,7 @@ venv
 db.sqlite3
 
 # Kotlin Spring
-
+send_server.sh
 HELP.md
 .gradle
 build/
