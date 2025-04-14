@@ -38,7 +38,7 @@ class ChakbootService(
         val result: ByteArray?
         runBlocking {
             val response = ktorClient.submitFormWithBinaryData(
-                url = "http://localhost:8085/predict/",
+                url = "http://localhost:8086/predict/",
                 formData = formData {
                     append("img1", img1Bytes, Headers.build {
                         append(HttpHeaders.ContentType, "image/png")
