@@ -1,4 +1,3 @@
-import os
 from io import BytesIO
 
 import torch
@@ -7,12 +6,6 @@ from django.views.decorators.csrf import csrf_exempt
 from PIL import Image
 
 from CatVTON.inference_one import inference_model
-
-# 모델 로딩
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../MY_MODEL/model.pt'))
-model = torch.load(MODEL_PATH, map_location=DEVICE)
-model.eval()
 
 
 @csrf_exempt
