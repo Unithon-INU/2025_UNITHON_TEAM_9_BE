@@ -25,14 +25,14 @@ def inference_catvton(request):
                 output = inference_model(
                     img1,
                     img2,
-                    num_inference_steps=1,
+                    num_inference_steps=25,
                 )
 
             buffer = BytesIO()
-            output.save(buffer, format='JPG')
+            output.save(buffer, format='PNG')
             buffer.seek(0)
 
-            return HttpResponse(buffer, content_type='image/jpeg')
+            return HttpResponse(buffer, content_type='image/png')
         except Exception as e:
             traceback.print_exc()
             return HttpResponse(f'Error: {str(e)}', status=500)
