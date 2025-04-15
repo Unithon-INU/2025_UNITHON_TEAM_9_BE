@@ -37,7 +37,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = bool(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = [
-    'https://home.goldenmine.kr:8086'
+    '*'
 ]
 
 
