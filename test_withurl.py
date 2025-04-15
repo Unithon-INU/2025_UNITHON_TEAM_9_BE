@@ -2,6 +2,7 @@ import requests
 import base64
 
 
+# 실행할거면 말하고 실행요망
 def main():
     url = "https://home.goldenmine.kr/chakboot/ai/predict"
     image_path1 = "CatVTON/my_test/wonyeong.png"  # 실제 이미지 파일 경로로 변경
