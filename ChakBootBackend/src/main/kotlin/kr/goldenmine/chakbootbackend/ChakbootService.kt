@@ -37,7 +37,7 @@ class ChakbootService(
         val img2Bytes = img2.bytes
 
 //        return img1Bytes
-        val result: ByteArray?
+        val result: ByteArray
         runBlocking {
             val response = ktorClient.submitFormWithBinaryData(
                 url = "http://localhost:8086/predict/",
@@ -56,12 +56,11 @@ class ChakbootService(
             if (response.status.isSuccess()) {
                 result = response.body()
             } else {
-                result = null
-                logger.warn("django response failed: ${response.status} ${response.bodyAsText()}")
+                throw BadRequestException("inference server response failed: ${response.status} ${response.bodyAsText()}")
             }
         }
 
-        return result ?: throw BadRequestException("에러 발생")
+        return result
     }
 
     @PostConstruct

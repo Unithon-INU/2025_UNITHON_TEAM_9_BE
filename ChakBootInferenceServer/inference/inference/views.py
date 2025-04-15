@@ -2,16 +2,37 @@ import traceback
 from io import BytesIO
 
 import torch
+import os
+import time
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from inference_one import inference_model
 from util.image_util import convert_multipart_to_pillow
+
+LOCK_FILE = "/tmp/inference_lock.lock"
+LOCK_TIMEOUT = 3  # 락 획득 시도 최대 시간 (초)
 
 
 @csrf_exempt
 def inference_catvton(request):
     if request.method == 'POST':
         try:
+            # 락 획득 시도
+            lock_acquired = False
+            start_time = time.time()
+            while time.time() - start_time < LOCK_TIMEOUT:
+                try:
+                    # 파일이 없으면 생성 (O_CREAT | O_EXCL 조합으로 원자적 생성 보장)
+                    fd = os.open(LOCK_FILE, os.O_CREAT | os.O_EXCL)
+                    os.close(fd)
+                    lock_acquired = True
+                    break
+                except FileExistsError:
+                    time.sleep(0.1)  # 잠시 대기 후 재시도
+
+            if not lock_acquired:
+                return HttpResponse('Another inference is currently running. Please try again later.', status=429)  # Too Many Requests
+
             img1_file = request.FILES.get('img1')
             img2_file = request.FILES.get('img2')
 
