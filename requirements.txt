@@ -24,3 +24,6 @@ huggingface_hub
 # for inference server
 django
 python-dotenv
+
+# for test
+requests

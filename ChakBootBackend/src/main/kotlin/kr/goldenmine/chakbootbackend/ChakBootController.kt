@@ -32,7 +32,7 @@ class ChakBootController(
             ))
     }
 
-    @PostMapping("/url/{name}")
+    @GetMapping("/url/{name}")
     fun getFile(
         @PathVariable("name") name: String
     ): ResponseEntity<ByteArray> {
