@@ -16,9 +16,9 @@ LOCK_TIMEOUT = 3  # 락 획득 시도 최대 시간 (초)
 @csrf_exempt
 def inference_catvton(request):
     if request.method == 'POST':
+        lock_acquired = False
         try:
             # 락 획득 시도
-            lock_acquired = False
             start_time = time.time()
             while time.time() - start_time < LOCK_TIMEOUT:
                 try:
@@ -57,6 +57,10 @@ def inference_catvton(request):
         except Exception as e:
             traceback.print_exc()
             return HttpResponse(f'Error: {str(e)}', status=500)
+        finally:
+            # 락 해제
+            if lock_acquired and os.path.exists(LOCK_FILE):
+                os.remove(LOCK_FILE)
 
     return HttpResponse('Only POST allowed.', status=405)
 
