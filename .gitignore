@@ -18,6 +18,7 @@ my_test
 venv
 .venv
 db.sqlite3
+received_image.png
 
 # Kotlin Spring
 send_server.sh
