@@ -70,6 +70,7 @@ class ChakbootService(
 
     fun generateFile(bufferedImage: BufferedImage): String {
         // 동기화된 파일 만들기
+        // TODO 원자적 처리 추가 코딩 필요
         var file: File
         synchronized(this) {
             do {
