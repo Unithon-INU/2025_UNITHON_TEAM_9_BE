@@ -27,7 +27,7 @@ def main():
     model_files = list(model_folder.rglob('*.png'))
     cloth_files = list(cloth_folder.rglob('*.png'))
 
-    for model_file, cloth_file in (pg_bar := tqdm([(m, c) for m in model_files for c in cloth_files], desc='Batch Progress', ncols=100)):
+    for model_file, cloth_file in (pg_bar := tqdm([(m, c) for m in model_files for c in cloth_files], desc='Batch Progress', ncols=150)):
         # set description
         result_file = result_folder / (model_file.stem + '_' + cloth_file.stem + '.png')
         pg_bar.set_description(result_file.name)

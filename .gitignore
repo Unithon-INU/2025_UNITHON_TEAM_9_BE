@@ -22,6 +22,7 @@ received_image.png
 model
 cloth
 result
+temp
 
 # Kotlin Spring
 send_server.sh
