@@ -19,6 +19,9 @@ venv
 .venv
 db.sqlite3
 received_image.png
+model
+cloth
+result
 
 # Kotlin Spring
 send_server.sh
