@@ -3,6 +3,7 @@ package kr.goldenmine.chakbootbackend
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.compression.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
@@ -31,6 +32,11 @@ class ChakbootService(
         val ktorClient = HttpClient(CIO) {
             install(ContentEncoding) {
                 gzip() // Enable Gzip handling explicitly
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 60_000 // 60초
+                connectTimeoutMillis = 20_000
+                socketTimeoutMillis = 60_000
             }
         }
         val img1Bytes = img1.bytes
