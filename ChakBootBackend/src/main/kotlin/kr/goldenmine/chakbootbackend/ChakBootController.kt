@@ -2,6 +2,7 @@ package kr.goldenmine.chakbootbackend
 
 import kr.goldenmine.chakbootbackend.dto.ResponsePrediction
 import kr.goldenmine.chakbootbackend.util.byteArrayToBufferedImage
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -30,6 +31,20 @@ class ChakBootController(
                 imageBase64 = base64Image,
                 url = url,
             ))
+    }
+
+    @GetMapping("/recent")
+    fun getRecentUrls(): ResponseEntity<List<String>> {
+        return ResponseEntity
+            .ok()
+            .body(chakbootService.getRecentUrls())
+    }
+
+    @GetMapping("/recentcapture")
+    fun getRecentCaptured(): ResponseEntity<List<String>> {
+        return ResponseEntity
+            .ok()
+            .body(chakbootService.getLatestImageBase64List())
     }
 
     @GetMapping("/url/{name}")

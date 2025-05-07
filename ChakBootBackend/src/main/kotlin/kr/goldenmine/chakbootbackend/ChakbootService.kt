@@ -24,7 +24,11 @@ import javax.imageio.ImageIO
 
 @Service
 class ChakbootService(
-    @Value("\${app.image_path}") private val imagePath: String
+    @Value("\${app.image_path}") private val imagePath: String,
+
+    @Value("\${ftp.file.path}")
+    private val ftpFilePath: String
+
 ) {
     private val logger: Logger = LoggerFactory.getLogger(ChakbootService::class.java)
 
@@ -72,6 +76,9 @@ class ChakbootService(
     @PostConstruct
     fun createFolder() {
         File(imagePath).mkdirs()
+
+        val generatedUrls = File("generatedUrls.txt")
+        if(!generatedUrls.exists()) generatedUrls.createNewFile()
     }
 
     fun generateFile(bufferedImage: BufferedImage): String {
@@ -88,7 +95,54 @@ class ChakbootService(
         val res = ImageIO.write(bufferedImage, "png", file)
         logger.info("Generated url: ${file.path} $res ${bufferedImage.width} ${bufferedImage.height}")
 
+        synchronized(this) {
+            val generatedUrls = File("generatedUrls.txt")
+            generatedUrls.appendText("${file.name}\n")
+        }
+
         return file.name
+    }
+
+    fun getRecentUrls(): List<String> {
+        val generatedUrls = File("generatedUrls.txt")
+//        if(!generatedUrls.exists()) generatedUrls.createNewFile()
+
+        return generatedUrls.readLines().takeLast(5)
+    }
+
+    fun getLatestImageBase64List(maxCount: Int = 3): List<String> {
+        val folder = File(ftpFilePath)
+        if (!folder.exists() || !folder.isDirectory) {
+            throw IllegalArgumentException("Invalid folder path: $ftpFilePath")
+        }
+
+        val imageExtensions = listOf("jpg", "jpeg", "png", "gif", "bmp", "webp")
+
+        return folder.listFiles { file ->
+            file.isFile &&
+                    imageExtensions.any { ext -> file.name.lowercase().endsWith(".$ext") &&
+                            isValidImage(file)
+                    }
+        }?.sortedByDescending { it.lastModified() }
+            ?.take(maxCount)
+            ?.mapNotNull { file ->
+                try {
+                    val bytes = file.readBytes()
+                    Base64.getEncoder().encodeToString(bytes)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }
+            ?: emptyList()
+    }
+
+    fun isValidImage(file: File): Boolean {
+        return try {
+            ImageIO.read(file)?.let { true } ?: false
+        } catch (e: Exception) {
+            false
+        }
     }
 
     fun getImageFromFile(fileName: String): ByteArray {
