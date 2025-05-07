@@ -17,7 +17,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.awt.Graphics2D
+import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
 import javax.imageio.ImageIO
@@ -127,14 +130,31 @@ class ChakbootService(
             ?.take(maxCount)
             ?.mapNotNull { file ->
                 try {
-                    val bytes = file.readBytes()
-                    Base64.getEncoder().encodeToString(bytes)
+                    encodeImageRotatedIfLandscape(file)
+//                    if(file.name.lowercase().endsWith("jpg")) {
+//                        convertJpgToPngBase64(file)
+//                    } else {
+//                        Base64.getEncoder().encodeToString(file.readBytes())
+//                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     null
                 }
             }
             ?: emptyList()
+    }
+
+    fun convertJpgToPngBase64(jpgFile: File): String {
+        // 1. 이미지 디코딩
+        val image = ImageIO.read(jpgFile) // jpg 파일 → BufferedImage
+
+        // 2. PNG로 인코딩하여 바이트 배열로 출력
+        val outputStream = ByteArrayOutputStream()
+        ImageIO.write(image, "jpg", outputStream)
+        val pngBytes = outputStream.toByteArray()
+
+        // 3. Base64 인코딩
+        return Base64.getEncoder().encodeToString(pngBytes)
     }
 
     fun isValidImage(file: File): Boolean {
@@ -167,3 +187,45 @@ class ChakbootService(
 //        bytes             // file content
 //    )
 //}
+
+fun encodeImageRotatedIfLandscape(file: File): String {
+    // 1. 파일 → 이미지 디코딩
+    val image: BufferedImage = ImageIO.read(file)
+
+    // 2. 가로가 긴 경우 → 회전
+    val processedImage = if (image.width > image.height) {
+        rotateLeft90(image)
+    } else {
+        image
+    }
+
+    // 3. 이미지 → PNG 바이트로 인코딩
+    val outputStream = ByteArrayOutputStream()
+    ImageIO.write(processedImage, "png", outputStream)
+    val pngBytes = outputStream.toByteArray()
+
+    // 4. Base64 인코딩
+    return Base64.getEncoder().encodeToString(pngBytes)
+}
+
+/**
+ * 이미지를 왼쪽으로 90도 회전
+ */
+fun rotateLeft90(img: BufferedImage): BufferedImage {
+    val w = img.width
+    val h = img.height
+    val rotated = BufferedImage(h, w, img.type)
+
+    val g2d: Graphics2D = rotated.createGraphics()
+    val transform = AffineTransform()
+
+    // 왼쪽(반시계방향)으로 90도 회전: (0, 0) → (0, w)
+    transform.translate(0.0, w.toDouble())
+    transform.rotate(Math.toRadians(-90.0))
+
+    g2d.transform = transform
+    g2d.drawImage(img, 0, 0, null)
+    g2d.dispose()
+
+    return rotated
+}
