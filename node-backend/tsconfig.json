@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "target": "ES2020",
+
+    // ↓ 추가
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"          // 우리가 만든 커스텀 d.ts 경로
+    ]
+  },
+  "include": ["src"]         // src 아래 파일 전부 컴파일
+}
