@@ -110,10 +110,10 @@ class ChakbootService(
         val generatedUrls = File("generatedUrls.txt")
 //        if(!generatedUrls.exists()) generatedUrls.createNewFile()
 
-        return generatedUrls.readLines().takeLast(5)
+        return generatedUrls.readLines().takeLast(3)
     }
 
-    fun getLatestImageBase64List(maxCount: Int = 3): List<String> {
+    fun getLatestImageBase64List(maxCount: Int = 1): List<String> {
         val folder = File(ftpFilePath)
         if (!folder.exists() || !folder.isDirectory) {
             throw IllegalArgumentException("Invalid folder path: $ftpFilePath")
