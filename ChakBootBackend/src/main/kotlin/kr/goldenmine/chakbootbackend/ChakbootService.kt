@@ -76,6 +76,49 @@ class ChakbootService(
         return result
     }
 
+    fun inferenceRecentImage(img: MultipartFile): ByteArray {
+        val ktorClient = HttpClient(CIO) {
+            install(ContentEncoding) {
+                gzip() // Enable Gzip handling explicitly
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 60_000 // 60초
+                connectTimeoutMillis = 20_000
+                socketTimeoutMillis = 60_000
+            }
+        }
+        val imgBase64 = getLatestImageBase64List().first()
+        val cleanBase64 = imgBase64.substringAfter(",") // "data:image/...;base64," 제거
+        val imgBytes = Base64.getDecoder().decode(cleanBase64)
+        val img2Bytes = img.bytes
+
+//        return img1Bytes
+        val result: ByteArray
+        runBlocking {
+            val response = ktorClient.submitFormWithBinaryData(
+                url = "http://localhost:8086/predict/",
+                formData = formData {
+                    append("img1", imgBytes, Headers.build {
+                        append(HttpHeaders.ContentType, "image/png")
+                        append(HttpHeaders.ContentDisposition, "filename=\"img1.png\"")
+                    })
+                    append("img2", img2Bytes, Headers.build {
+                        append(HttpHeaders.ContentType, "image/png")
+                        append(HttpHeaders.ContentDisposition, "filename=\"img2.png\"")
+                    })
+                }
+            )
+
+            if (response.status.isSuccess()) {
+                result = response.body()
+            } else {
+                throw BadRequestException("inference server response failed: ${response.status} ${response.bodyAsText()}")
+            }
+        }
+
+        return result
+    }
+
     @PostConstruct
     fun createFolder() {
         File(imagePath).mkdirs()

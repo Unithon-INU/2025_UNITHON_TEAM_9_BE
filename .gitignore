@@ -23,6 +23,7 @@ model
 cloth
 result
 temp
+data.csv
 
 # Kotlin Spring
 send_server.sh

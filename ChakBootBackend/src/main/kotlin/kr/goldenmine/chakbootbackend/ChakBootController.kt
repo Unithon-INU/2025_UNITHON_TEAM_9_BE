@@ -33,6 +33,24 @@ class ChakBootController(
             ))
     }
 
+    @PostMapping("/predictrecent", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun handlePredictionRecent(
+        @RequestPart("img") img: MultipartFile,
+    ): ResponseEntity<ResponsePrediction> {
+        val result = chakbootService.inferenceRecentImage(img)
+//        val base64Image = Base64Utils.encodeToString(result)
+        val base64Image = Base64.getEncoder().encodeToString(result)
+        val url = chakbootService.generateFile(byteArrayToBufferedImage(result))
+
+        return ResponseEntity
+            .ok()
+//            .contentType(MediaType.APPLICATION_JSON)
+            .body(ResponsePrediction(
+                imageBase64 = base64Image,
+                url = url,
+            ))
+    }
+
     @GetMapping("/recent")
     fun getRecentUrls(): ResponseEntity<List<String>> {
         return ResponseEntity
