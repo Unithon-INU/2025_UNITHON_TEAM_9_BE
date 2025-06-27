@@ -47,8 +47,8 @@ automasker = AutoMasker(
 )
 
 
-WIDTH = 768 * 2
-HEIGHT = 1024 * 2
+WIDTH = 768
+HEIGHT = 1024
 
 
 def inference_model(
