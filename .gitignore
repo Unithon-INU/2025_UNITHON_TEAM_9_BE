@@ -19,6 +19,9 @@ venv
 .venv
 db.sqlite3
 received_image.png
+ChakBootInferenceServer_CSEC/CSEC
+csec.ckpt
+
 
 # Kotlin Spring
 send_server.sh

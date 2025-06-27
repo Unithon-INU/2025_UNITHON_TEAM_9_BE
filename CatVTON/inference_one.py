@@ -47,15 +47,15 @@ automasker = AutoMasker(
 )
 
 
-WIDTH = 768
-HEIGHT = 1024
+WIDTH = 768 * 2
+HEIGHT = 1024 * 2
 
 
 def inference_model(
     person_image,  # numpy image
     cloth_image,  # numpy image
     cloth_type='overall',
-    num_inference_steps=25,
+    num_inference_steps=50,
     guidance_scale=2.85,
     seed=42,
     show_type="result only",

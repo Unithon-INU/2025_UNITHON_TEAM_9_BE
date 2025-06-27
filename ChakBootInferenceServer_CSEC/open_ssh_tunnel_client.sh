@@ -1,0 +1,1 @@
+ssh -N -R 8086:localhost:8086 goldenmine@home.goldenmine.kr
