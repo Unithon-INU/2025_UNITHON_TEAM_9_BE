@@ -56,7 +56,7 @@ def inference_model(
     cloth_image,  # numpy image
     cloth_type='upper',
     num_inference_steps=50,
-    guidance_scale=2.85,
+    guidance_scale=2.95,
     seed=42,
     show_type="result only",
 ):
