@@ -27,3 +27,7 @@ python-dotenv
 
 # for test
 requests
+
+# for network scan
+python-nmap
+netifaces

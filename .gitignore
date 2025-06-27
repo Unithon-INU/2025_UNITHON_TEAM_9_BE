@@ -1,9 +1,9 @@
 # Python
 __pycache__
-model/__pycache__
-model/DensePose/__pycache__
-model/SCHP/__pycache__
-model/SCHP/*/__pycache__
+temp/model/__pycache__
+temp/model/DensePose/__pycache__
+temp/model/SCHP/__pycache__
+temp/model/SCHP/*/__pycache__
 resource/demo/output
 resource/demo/example/.DS_Store
 Models
@@ -22,7 +22,11 @@ received_image.png
 ChakBootInferenceServer_CSEC/CSEC
 csec.ckpt
 
-
+model
+cloth
+result
+temp
+data.csv
 # Kotlin Spring
 send_server.sh
 HELP.md
